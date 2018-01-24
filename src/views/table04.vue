@@ -1,8 +1,5 @@
 <template lang="html">
   <div class="table04_box">
-    <div class="table04_box-header">
-      <x-header>分享二维码</x-header>
-    </div>
     <h5>长按二维码分享</h5>
     <div class="table04_box_qrcode">
       <img src="../assets/images/qr.png" alt="qrcode">

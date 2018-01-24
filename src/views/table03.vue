@@ -1,9 +1,6 @@
 <template lang="html">
   <div>
     <div class="hacker-news-list">
-      <div class="hacker-news-header">
-        <x-header>积分记录</x-header>
-      </div>
       <div class="hacker-news-item" v-for="item in list">
         <flexbox>
           <flexbox-item>

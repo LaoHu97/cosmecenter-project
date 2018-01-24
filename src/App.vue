@@ -1,5 +1,8 @@
 <template>
   <div id="app">
+    <div class="hacker" v-show="$route.path!=='/'">
+      <x-header>{{$route.name}}</x-header>
+    </div>
     <transition name="slide-fade">
       <router-view></router-view>
     </transition>
@@ -11,7 +14,7 @@
 
 <script>
 import Bus from './bus.js'
-import { Tabbar, TabbarItem, Loading, TransferDomDirective as TransferDom } from 'vux'
+import { Tabbar, TabbarItem, Loading, XHeader, TransferDomDirective as TransferDom } from 'vux'
 export default {
   name: 'app',
   directives: {
@@ -20,7 +23,8 @@ export default {
   components: {
     Tabbar,
     TabbarItem,
-    Loading
+    Loading,
+    XHeader
   },
   data () {
     return {

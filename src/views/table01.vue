@@ -1,9 +1,6 @@
 <template lang="html">
   <div>
     <div class="hacker-news-list">
-      <div class="hacker-news-header">
-        <x-header>充值记录</x-header>
-      </div>
       <div class="hacker-news-item" v-for="item in list">
         <flexbox>
           <flexbox-item>
@@ -31,14 +28,13 @@
 </template>
 <script>
 import InfiniteLoading from 'vue-infinite-loading';
-import {Divider, Flexbox,  FlexboxItem,  XHeader } from 'vux'
+import {Divider, Flexbox,  FlexboxItem } from 'vux'
 
 export default {
   components: {
     Divider,
     Flexbox,
     FlexboxItem,
-    XHeader,
     InfiniteLoading
   },
   data() {

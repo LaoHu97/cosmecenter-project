@@ -1,9 +1,6 @@
 <template lang="html">
   <div>
     <div class="hacker-news-list">
-      <div class="hacker-news-header">
-        <x-header>套餐列表</x-header>
-      </div>
       <div class="hacker-news-item">
         <flexbox>
           <flexbox-item :span='8'>
@@ -11,11 +8,33 @@
             <div class="flex-demo">购买时间：<span>2018-01-15</span></div>
           </flexbox-item>
           <flexbox-item>
-            <div class="flex-demo">
-              <x-button mini type="primary">激活</x-button>
+            <div class="flex-demo" style="text-align:right">
+              <x-button mini type="primary" @click.native="activationSubmit">激活</x-button>
             </div>
           </flexbox-item>
         </flexbox>
+      </div>
+      <div v-transfer-dom>
+        <popup v-model="popupShow" height="100%">
+          <popup-header
+          left-text="取消"
+          right-text="确定"
+          title="请选择门店"
+          :show-bottom-border="false"
+          @on-click-left="popupShow = false"
+          @on-click-right="popupShow = false"></popup-header>
+          <search
+          v-model="value"
+          position="fixed"
+          auto-scroll-to-top top="46px"
+          @on-focus="onFocus"
+          @on-cancel="onCancel"
+          @on-change="onChange"
+          ref="search"></search>
+          <group :gutter="searchSubmitGutter">
+            <radio :options="groupOptions"></radio>
+          </group>
+        </popup>
       </div>
       <!-- <infinite-loading :on-infinite="onInfinite" ref="infiniteLoading" spinner="spiral">
         <span slot="no-results">
@@ -30,23 +49,60 @@
 </template>
 <script>
 import InfiniteLoading from 'vue-infinite-loading';
-import {Divider, Flexbox,  FlexboxItem,  XHeader, XButton } from 'vux'
+import {Divider, Flexbox,  FlexboxItem,  XHeader, XButton, Group, Radio, Search, PopupHeader, Popup, TransferDom } from 'vux'
 
 export default {
+  directives: {
+    TransferDom
+  },
   components: {
     Divider,
     Flexbox,
     FlexboxItem,
     XHeader,
     InfiniteLoading,
-    XButton
+    XButton,
+    Radio,
+    PopupHeader,
+    Popup,
+    Group,
+    Search
   },
   data() {
     return {
-      list:[]
+      list:[],
+      searchSubmitGutter:0,
+      popupShow:false,
+      groupOptions:[{
+        key: '1',
+        value: 'radio001'
+      },{
+        key: '2',
+        value: 'radio002'
+      }],
+      groupOptions1:[{
+        key: '1',
+        value: 'radi1'
+      },{
+        key: '2',
+        value: 'radi2'
+      }]
     }
   },
   methods: {
+    activationSubmit(){
+      this.popupShow=true
+    },
+    onFocus(){
+      this.searchSubmitGutter=44
+    },
+    onCancel(){
+      this.searchSubmitGutter=0
+    },
+    onChange(val){
+      console.log(val)
+      this.groupOptions=this.groupOptions1
+    }
     // onInfinite() {
     //   this.$http.post(COURSES+'/person/queryTransRecord', {
     //       pagNum: String(this.list.length / 10 + 1),
@@ -91,7 +147,7 @@ export default {
   border: 1px solid #999;
   background-color: #F9FAFC;
   padding: 15px;
-  margin: 5px;
+  margin: 15px;
   border-radius: 5px;
   font-size: 14px;
 }
