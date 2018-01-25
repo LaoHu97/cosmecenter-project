@@ -1,19 +1,27 @@
 <template lang="html">
   <div>
     <div class="hacker-news-list">
-      <div class="hacker-news-item">
+      <div class="hacker-news-item" v-for="item in list">
         <flexbox>
           <flexbox-item :span='8'>
-            <div class="flex-demo">套餐名称：<span>A套餐</span></div>
-            <div class="flex-demo">购买时间：<span>2018-01-15</span></div>
+            <div class="flex-demo">套餐名称：<span>{{item.pkg_name}}</span></div>
+            <div class="flex-demo">购买时间：<span>{{reverseNumber(item.gmt_create)}}</span></div>
           </flexbox-item>
           <flexbox-item>
             <div class="flex-demo" style="text-align:right">
-              <x-button mini type="primary" @click.native="activationSubmit">激活</x-button>
+              <x-button mini type="primary" @click.native="activationSubmit(item.id)" :disabled="item.pkgStatus!==1">{{item.pkgStatus == 1 ? '激活' : item.pkgStatus == 2 ? '已激活' : '已到期'}}</x-button>
             </div>
           </flexbox-item>
         </flexbox>
       </div>
+      <infinite-loading @infinite="onInfinite" spinner="waveDots">
+        <span slot="no-results">
+          您还没有购买套餐 :(
+        </span>
+        <span slot="no-more">
+          没有套餐了 :(
+        </span>
+      </infinite-loading>
       <div v-transfer-dom>
         <popup v-model="popupShow" height="100%">
           <popup-header
@@ -22,9 +30,9 @@
           title="请选择门店"
           :show-bottom-border="false"
           @on-click-left="popupShow = false"
-          @on-click-right="popupShow = false"></popup-header>
+          @on-click-right="clickRight"></popup-header>
           <search
-          v-model="value"
+          v-model="searchValue"
           position="fixed"
           auto-scroll-to-top top="46px"
           @on-focus="onFocus"
@@ -32,24 +40,17 @@
           @on-change="onChange"
           ref="search"></search>
           <group :gutter="searchSubmitGutter">
-            <radio :options="groupOptions"></radio>
+            <radio v-model="radioValue" :options="groupOptions"></radio>
           </group>
         </popup>
       </div>
-      <!-- <infinite-loading :on-infinite="onInfinite" ref="infiniteLoading" spinner="spiral">
-        <span slot="no-results">
-          暂无消费记录 :(
-        </span>
-        <span slot="no-more">
-          没有记录了 :(
-        </span>
-      </infinite-loading> -->
     </div>
   </div>
 </template>
 <script>
+import { queryPkgPurchaseByCondition, selectStoreListByPhone, activeRelTime } from '../api.js'
 import InfiniteLoading from 'vue-infinite-loading';
-import {Divider, Flexbox,  FlexboxItem,  XHeader, XButton, Group, Radio, Search, PopupHeader, Popup, TransferDom } from 'vux'
+import {Divider, Flexbox,  FlexboxItem,  XHeader, XButton, Group, Radio, Search, PopupHeader, Popup, TransferDom, dateFormat } from 'vux'
 
 export default {
   directives: {
@@ -73,25 +74,29 @@ export default {
       list:[],
       searchSubmitGutter:0,
       popupShow:false,
-      groupOptions:[{
-        key: '1',
-        value: 'radio001'
-      },{
-        key: '2',
-        value: 'radio002'
-      }],
-      groupOptions1:[{
-        key: '1',
-        value: 'radi1'
-      },{
-        key: '2',
-        value: 'radi2'
-      }]
+      radioValue:'',
+      activationId:'',
+      groupOptions:[]
     }
   },
   methods: {
-    activationSubmit(){
+    reverseNumber(x){
+      return dateFormat(x, 'YYYY-MM-DD HH:mm:ss')
+    },
+    selectStore(sname){
+      let para = {
+        mid:JSON.parse(sessionStorage.getItem('mid')),
+        numPerPage:'10',
+        sname:sname
+      }
+      selectStoreListByPhone(para).then((res)=>{
+        this.groupOptions=res.data.storeList
+      })
+    },
+    activationSubmit(activationId){
       this.popupShow=true
+      this.activationId = activationId
+      this.selectStore()
     },
     onFocus(){
       this.searchSubmitGutter=44
@@ -99,32 +104,46 @@ export default {
     onCancel(){
       this.searchSubmitGutter=0
     },
+    clickRight(){
+      console.log(this.radioValue+'-'+this.activationId);
+      let para = {
+        mid:JSON.parse(sessionStorage.getItem('mid')),
+        sid:String(this.radioValue),
+        purchaseId:String(this.activationId),
+        cardCode:JSON.parse(sessionStorage.getItem('cardCode')),
+        cardNum:JSON.parse(sessionStorage.getItem('cardNum')),
+        memId:JSON.parse(sessionStorage.getItem('memId')),
+        cardid:JSON.parse(sessionStorage.getItem('card_id')),
+        openid:JSON.parse(sessionStorage.getItem('openId')),
+      }
+      activeRelTime(para).then((res)=>{
+
+      })
+    },
     onChange(val){
-      console.log(val)
-      this.groupOptions=this.groupOptions1
+      this.selectStore(val)
+    },
+    onInfinite($state){
+      let para = {
+        pagNum: String(this.list.length / 10 + 1),
+        mid:JSON.parse(sessionStorage.getItem('mid')),
+        openid:JSON.parse(sessionStorage.getItem('openId')),
+        numPerPage:'10'
+      }
+      queryPkgPurchaseByCondition(para).then((res)=>{
+        setTimeout(() => {
+          if (res.data.pkgPurchaseList.length) {
+            this.list = this.list.concat(res.data.pkgPurchaseList);
+            $state.loaded();
+            if (this.list.length == res.data.totalCount) {
+              $state.complete();
+            }
+          } else {
+            $state.complete();
+          }
+        },300);
+      })
     }
-    // onInfinite() {
-    //   this.$http.post(COURSES+'/person/queryTransRecord', {
-    //       pagNum: String(this.list.length / 10 + 1),
-    //       mid:JSON.parse(sessionStorage.getItem('mid')),
-    //       card_id:JSON.parse(sessionStorage.getItem('card_id')),
-    //       openId:JSON.parse(sessionStorage.getItem('openId')),
-    //       numPerPage:'10',
-    //       type:'W'
-    //   }).then((res) => {
-    //     setTimeout(() => {
-    //       if (res.data.data.accTransList.length) {
-    //         this.list = this.list.concat(res.data.data.accTransList);
-    //         this.$refs.infiniteLoading.$emit('$InfiniteLoading:loaded');
-    //         if (this.list.length == res.data.data.total) {
-    //           this.$refs.infiniteLoading.$emit('$InfiniteLoading:complete');
-    //         }
-    //       } else {
-    //         this.$refs.infiniteLoading.$emit('$InfiniteLoading:complete');
-    //       }
-    //     },300);
-    //   });
-    // },
   },
   mounted() {
 

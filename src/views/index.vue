@@ -29,7 +29,7 @@
            积分
          </div>
          <div>
-           <span>0</span>
+           <span>￥{{card.dividend}}</span>
            <br/>
            分红
          </div>
@@ -38,14 +38,14 @@
     </div>
     <div class="center_bottom">
       <grid :cols="3">
-        <grid-item label="套餐列表" link="/table02" >
+        <!-- <grid-item label="套餐列表" link="/table02" >
           <i slot="icon" class="iconfont">&#xe6de;</i>
+        </grid-item> -->
+        <grid-item label="我的套餐" link="/table02" >
+          <i slot="icon" class="iconfont">&#xe6e2;</i>
         </grid-item>
         <grid-item label="积分记录" link="/table03" >
           <i slot="icon" class="iconfont">&#xe6a4;</i>
-        </grid-item>
-        <grid-item label="我的套餐" link="/table01" >
-          <i slot="icon" class="iconfont">&#xe6e2;</i>
         </grid-item>
         <grid-item label="我的邀请码" link="/table04" >
           <i slot="icon" class="iconfont">&#xe71c;</i>
@@ -56,7 +56,7 @@
 </template>
 
 <script>
-import { queryShopMem } from '../api.js'
+import { queryShopMem, queryOnePkgInviterByCondition } from '../api.js'
 import {
   Divider,
   Card,
@@ -78,7 +78,8 @@ export default {
         logo:'',
         cardno:'',
         balance:'',
-        bouns:''
+        bouns:'',
+        dividend:''
       }
     }
   },
@@ -120,12 +121,24 @@ export default {
       isInitCode:card_Code
     }
     queryShopMem(para).then((res)=>{
+      sessionStorage.setItem('cardNum', JSON.stringify(res.data.cardno));
+      sessionStorage.setItem('cardCode', JSON.stringify(res.data.cardCode));
+      sessionStorage.setItem('memId', JSON.stringify(res.data.memId));
         if (res.status == 200) {
           that.card.title = res.data.title;
           that.card.logo = res.data.logo;
           that.card.cardno = res.data.cardno;
           that.card.balance = res.data.balance;
           that.card.bouns = res.data.bouns;
+          let para={
+            mid:res.data.mid,
+            openid:res.data.cardOpenId,
+            card_num:res.data.cardno,
+            card_id:res.data.card_id
+          }
+          queryOnePkgInviterByCondition(para).then((res)=>{
+            this.card.dividend=res.data.dividend
+          })
           if (res.data.bac_url) {
             that.activeColor = "url("+res.data.bac_url+")";
           }else {

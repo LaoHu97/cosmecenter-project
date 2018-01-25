@@ -8,13 +8,14 @@
     </transition>
     <div v-transfer-dom>
       <loading :show="show" text="请稍后"></loading>
+      <alert v-model="alertShow" title="提示" @on-hide="onHide">{{alertText}}</alert>
     </div>
   </div>
 </template>
 
 <script>
 import Bus from './bus.js'
-import { Tabbar, TabbarItem, Loading, XHeader, TransferDomDirective as TransferDom } from 'vux'
+import { Tabbar, TabbarItem, Loading, XHeader, Alert, TransferDomDirective as TransferDom } from 'vux'
 export default {
   name: 'app',
   directives: {
@@ -24,17 +25,30 @@ export default {
     Tabbar,
     TabbarItem,
     Loading,
-    XHeader
+    XHeader,
+    Alert
   },
   data () {
     return {
-      show: false
+      show: false,
+      alertShow: false,
+      alertText: ''
     }
   },
   created () {
     Bus.$on('loadingState', boolean => {
       this.show = boolean
     })
+    Bus.$on('alertState', alertStateMap => {
+      console.log(alertStateMap)
+      this.alertShow = alertStateMap.boolean
+      this.alertText = alertStateMap.message
+    })
+  },
+  methods: {
+    onHide () {
+
+    }
   }
 }
 </script>

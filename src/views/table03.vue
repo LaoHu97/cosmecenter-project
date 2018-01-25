@@ -14,7 +14,7 @@
           </flexbox-item>
         </flexbox>
       </div>
-      <infinite-loading @infinite="onInfinite" spinner="spiral">
+      <infinite-loading @infinite="onInfinite" spinner="waveDots">
         <span slot="no-results">
           暂无充值记录 :(
         </span>
@@ -28,7 +28,7 @@
 <script>
 import { queryBounsToPhone } from '../api.js'
 import InfiniteLoading from 'vue-infinite-loading';
-import {Divider, Flexbox,  FlexboxItem,  XHeader } from 'vux'
+import {Divider, Flexbox,  FlexboxItem,  XHeader, dateFormat } from 'vux'
 
 export default {
   components: {
