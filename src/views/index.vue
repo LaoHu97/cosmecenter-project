@@ -19,7 +19,7 @@
       <card>
         <div slot="content" class="card-demo-flex card-demo-content01">
          <div class="vux-1px-r">
-           <span>{{card.balance}}</span>
+           <span>{{card.level}}</span>
            <br/>
            等级
          </div>
@@ -77,7 +77,7 @@ export default {
         title:'',
         logo:'',
         cardno:'',
-        balance:'',
+        level:'',
         bouns:'',
         dividend:''
       }
@@ -128,7 +128,7 @@ export default {
           that.card.title = res.data.title;
           that.card.logo = res.data.logo;
           that.card.cardno = res.data.cardno;
-          that.card.balance = res.data.balance;
+          that.card.level = res.data.level;
           that.card.bouns = res.data.bouns;
           let para={
             mid:res.data.mid,

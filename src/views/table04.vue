@@ -2,7 +2,7 @@
   <div class="table04_box">
     <h5>长按二维码分享</h5>
     <div class="table04_box_qrcode">
-      <img src="../assets/images/qr.png" alt="qrcode">
+      <img :src="srcImg" alt="qrcode">
     </div>
     <div class="table04_box_list">
       <button-tab>
@@ -10,40 +10,101 @@
         <button-tab-item @on-item-click="consoleIndex(false)">已邀请</button-tab-item>
       </button-tab>
     </div>
-    <div class="table04_item">
+    <div class="table04_item"  v-for="item in list">
       <flexbox>
-        <flexbox-item>
-          <div>姓名：<span>张三</span></div>
+        <flexbox-item :span='4'>
+          <div>姓名：<span>{{item.name}}</span></div>
         </flexbox-item>
         <flexbox-item>
           <div>
             <i slot="icon" class="iconfont">&#xe6ed;</i>
-            <span>时间：2018-01-15</span>
+            <span>时间：{{gmt_create(item.gmt_create)}}</span>
           </div>
         </flexbox-item>
       </flexbox>
     </div>
+    <infinite-loading @infinite="onInfinite" spinner="waveDots" ref="infiniteLoading">
+      <span slot="no-results">
+        您还没有邀请过好友 :(
+      </span>
+      <span slot="no-more">
+        没有记录了 :(
+      </span>
+    </infinite-loading>
   </div>
 </template>
 
 <script>
-import { XHeader, ButtonTab, ButtonTabItem, Flexbox,  FlexboxItem } from 'vux'
+import { queryPkgInviteeByCondition, inviterCode } from '../api.js'
+import InfiniteLoading from 'vue-infinite-loading'
+import { XHeader, ButtonTab, ButtonTabItem, Flexbox,  FlexboxItem, dateFormat } from 'vux'
 export default {
   components: {
     XHeader,
     ButtonTab,
     ButtonTabItem,
     Flexbox,
-    FlexboxItem
+    FlexboxItem,
+    InfiniteLoading
   },
   data() {
     return {
-      list:[]
+      list:[],
+      srcImg:'',
+      status:'2'
     }
   },
+  created() {
+    this.inviterERCode()
+  },
   methods: {
+    gmt_create(date){
+      return dateFormat(date, 'YYYY-MM-DD HH:mm:ss')
+    },
     consoleIndex(data){
-      console.log(data)
+      this.list=[]
+      this.$nextTick(() => {
+        this.$refs.infiniteLoading.$emit('$InfiniteLoading:reset');
+      });
+      if (data) {
+        this.status='2'
+      }else {
+        this.status='1'
+      }
+    },
+    inviterERCode(){
+      let para = {
+        mid:JSON.parse(sessionStorage.getItem('mid')),
+        memId:JSON.parse(sessionStorage.getItem('memId')),
+        entType:'1',
+        encrypt_code:'1',
+        code:JSON.parse(sessionStorage.getItem('cardCode')),
+        openid:JSON.parse(sessionStorage.getItem('openId'))
+      }
+      this.srcImg = process.env.API_ROOT+'/pay/activity/inviterCode?mid='+para.mid+'&memId='+para.memId+'&entType='+para.entType+'&encrypt_code='+para.encrypt_code+'&code='+para.code+'&openid='+para.openid
+    },
+    onInfinite($state){
+      let para = {
+        pagNum: String(this.list.length / 10 + 1),
+        mid:JSON.parse(sessionStorage.getItem('mid')),
+        card_num:JSON.parse(sessionStorage.getItem('cardNum')),
+        memid:JSON.parse(sessionStorage.getItem('memId')),
+        numPerPage:'10',
+        status:this.status
+      }
+      queryPkgInviteeByCondition(para).then((res)=>{
+        setTimeout(() => {
+          if (res.data.pkgInviteeList.length) {
+            this.list = this.list.concat(res.data.pkgInviteeList);
+            $state.loaded();
+            if (this.list.length == res.data.totalCount) {
+              $state.complete();
+            }
+          } else {
+            $state.complete();
+          }
+        },300);
+      })
     }
   }
 }

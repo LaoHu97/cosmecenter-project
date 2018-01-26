@@ -3,9 +3,9 @@
     <div class="hacker" v-show="$route.path!=='/'">
       <x-header>{{$route.name}}</x-header>
     </div>
-    <transition name="slide-fade">
+    <!-- <transition name="slide-fade"> -->
       <router-view></router-view>
-    </transition>
+    <!-- </transition> -->
     <div v-transfer-dom>
       <loading :show="show" text="请稍后"></loading>
       <alert v-model="alertShow" title="提示" @on-hide="onHide">{{alertText}}</alert>
@@ -57,6 +57,14 @@ export default {
     font-family: 'Avenir', Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+  [contenteditable = "true"], input, textarea {
+  -webkit-user- select: auto!important;
+  -khtml-user-select: auto!important;
+  -moz-user-select: auto!important;
+  -ms-user-select: auto!important;
+  -o-user-select: auto!important;
+  user-select: auto!important;
   }
   @font-face {
     font-family: 'iconfont';  /* project id 302321 */

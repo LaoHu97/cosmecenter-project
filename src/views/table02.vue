@@ -5,7 +5,8 @@
         <flexbox>
           <flexbox-item :span='8'>
             <div class="flex-demo">套餐名称：<span>{{item.pkg_name}}</span></div>
-            <div class="flex-demo">购买时间：<span>{{reverseNumber(item.gmt_create)}}</span></div>
+            <div class="flex-demo" v-if="item.pkgStatus==1">购买时间：<span>{{reverseNumber(item.gmt_create)}}</span></div>
+            <div class="flex-demo" v-else>到期时间：<span>{{reverseNumber(item.endTime)}}</span></div>
           </flexbox-item>
           <flexbox-item>
             <div class="flex-demo" style="text-align:right">
@@ -14,7 +15,7 @@
           </flexbox-item>
         </flexbox>
       </div>
-      <infinite-loading @infinite="onInfinite" spinner="waveDots">
+      <infinite-loading @infinite="onInfinite" spinner="waveDots" ref="infiniteLoading">
         <span slot="no-results">
           您还没有购买套餐 :(
         </span>
@@ -40,17 +41,28 @@
           @on-change="onChange"
           ref="search"></search>
           <group :gutter="searchSubmitGutter">
-            <radio v-model="radioValue" :options="groupOptions"></radio>
+            <radio v-model="radioValue" :options="groupOptions"  @on-change="radioChange"></radio>
           </group>
+          <!-- <group :gutter="searchSubmitGutter">
+            <checklist label-position="left" :max='1' :options="groupOptions" v-model="radioValue" @on-change="radioChange"></checklist>
+          </group> -->
         </popup>
+        <confirm v-model="confirmShow"
+        show-input
+        :input-attrs="{type: 'password'}"
+        ref="confirmShow"
+        title="请输入门店密码"
+        @on-confirm="onConfirm"
+        @on-show="onShow5">
+        </confirm>
       </div>
     </div>
   </div>
 </template>
 <script>
 import { queryPkgPurchaseByCondition, selectStoreListByPhone, activeRelTime } from '../api.js'
-import InfiniteLoading from 'vue-infinite-loading';
-import {Divider, Flexbox,  FlexboxItem,  XHeader, XButton, Group, Radio, Search, PopupHeader, Popup, TransferDom, dateFormat } from 'vux'
+import InfiniteLoading from 'vue-infinite-loading'
+import {Divider, Flexbox,  FlexboxItem, Confirm,  XHeader, Checklist, XButton, Group, Radio, Search, PopupHeader, Popup, TransferDom, dateFormat, md5 } from 'vux'
 
 export default {
   directives: {
@@ -67,21 +79,52 @@ export default {
     PopupHeader,
     Popup,
     Group,
-    Search
+    Search,
+    Confirm,
+    Checklist
   },
   data() {
     return {
       list:[],
       searchSubmitGutter:0,
       popupShow:false,
+      confirmShow:false,
       radioValue:'',
+      radioamount:'',
       activationId:'',
       groupOptions:[]
     }
   },
   methods: {
+    onShow5 () {
+      this.$refs.confirmShow.setInputValue('')
+    },
     reverseNumber(x){
       return dateFormat(x, 'YYYY-MM-DD HH:mm:ss')
+    },
+    radioChange (value) {
+      let radioamount = this.groupOptions.find(function(e){return e.key == value});
+      this.radioamount = radioamount.saccount
+    },
+    onConfirm(val){
+      let para = {
+        spwd:md5(val+this.radioamount),
+        mid:JSON.parse(sessionStorage.getItem('mid')),
+        sid:String(this.radioValue),
+        purchaseId:String(this.activationId),
+        cardCode:JSON.parse(sessionStorage.getItem('cardCode')),
+        cardNum:JSON.parse(sessionStorage.getItem('cardNum')),
+        memId:JSON.parse(sessionStorage.getItem('memId')),
+        cardid:JSON.parse(sessionStorage.getItem('card_id')),
+        openid:JSON.parse(sessionStorage.getItem('openId')),
+      }
+      activeRelTime(para).then((res)=>{
+        this.popupShow=false
+        this.list=[]
+        this.$nextTick(() => {
+          this.$refs.infiniteLoading.$emit('$InfiniteLoading:reset');
+        });
+      })
     },
     selectStore(sname){
       let para = {
@@ -105,20 +148,12 @@ export default {
       this.searchSubmitGutter=0
     },
     clickRight(){
-      console.log(this.radioValue+'-'+this.activationId);
-      let para = {
-        mid:JSON.parse(sessionStorage.getItem('mid')),
-        sid:String(this.radioValue),
-        purchaseId:String(this.activationId),
-        cardCode:JSON.parse(sessionStorage.getItem('cardCode')),
-        cardNum:JSON.parse(sessionStorage.getItem('cardNum')),
-        memId:JSON.parse(sessionStorage.getItem('memId')),
-        cardid:JSON.parse(sessionStorage.getItem('card_id')),
-        openid:JSON.parse(sessionStorage.getItem('openId')),
+      if (this.radioValue) {
+        this.confirmShow=true
+      }else {
+        // 显示文字
+        this.$vux.toast.text('请选择门店', 'bottom')
       }
-      activeRelTime(para).then((res)=>{
-
-      })
     },
     onChange(val){
       this.selectStore(val)
