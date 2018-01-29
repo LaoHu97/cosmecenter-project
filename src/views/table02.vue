@@ -50,10 +50,8 @@
         <confirm v-model="confirmShow"
         show-input
         :input-attrs="{type: 'password'}"
-        ref="confirmShow"
         title="请输入门店密码"
-        @on-confirm="onConfirm"
-        @on-show="onShow5">
+        @on-confirm="onConfirm">
         </confirm>
       </div>
     </div>
@@ -96,17 +94,17 @@ export default {
     }
   },
   methods: {
-    onShow5 () {
-      this.$refs.confirmShow.setInputValue('')
-    },
     reverseNumber(x){
       return dateFormat(x, 'YYYY-MM-DD HH:mm:ss')
     },
     radioChange (value) {
       let radioamount = this.groupOptions.find(function(e){return e.key == value});
-      this.radioamount = radioamount.saccount
+      if (radioamount) {
+        this.radioamount = radioamount.saccount
+      }
     },
     onConfirm(val){
+      console.log(this.radioamount);
       let para = {
         spwd:md5(val+this.radioamount),
         mid:JSON.parse(sessionStorage.getItem('mid')),
@@ -119,7 +117,6 @@ export default {
         openid:JSON.parse(sessionStorage.getItem('openId')),
       }
       activeRelTime(para).then((res)=>{
-        this.popupShow=false
         this.list=[]
         this.$nextTick(() => {
           this.$refs.infiniteLoading.$emit('$InfiniteLoading:reset');
@@ -133,6 +130,7 @@ export default {
         sname:sname
       }
       selectStoreListByPhone(para).then((res)=>{
+        this.radioValue = ''
         this.groupOptions=res.data.storeList
       })
     },
@@ -150,6 +148,7 @@ export default {
     clickRight(){
       if (this.radioValue) {
         this.confirmShow=true
+        this.popupShow=false
       }else {
         // 显示文字
         this.$vux.toast.text('请选择门店', 'bottom')
@@ -167,8 +166,8 @@ export default {
       }
       queryPkgPurchaseByCondition(para).then((res)=>{
         setTimeout(() => {
-          if (res.data.pkgPurchaseList.length) {
-            this.list = this.list.concat(res.data.pkgPurchaseList);
+          if (res.data.purchaseList.length) {
+            this.list = this.list.concat(res.data.purchaseList);
             $state.loaded();
             if (this.list.length == res.data.totalCount) {
               $state.complete();
