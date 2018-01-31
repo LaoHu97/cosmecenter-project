@@ -23,13 +23,13 @@
            <br/>
            等级
          </div>
-         <div class="vux-1px-r">
+         <!-- <div class="vux-1px-r">
            <span>{{card.bouns}}</span>
            <br/>
            积分
-         </div>
+         </div> -->
          <div>
-           <span>￥{{card.dividend}}</span>
+           <span>￥{{card.commission}}</span>
            <br/>
            分红
          </div>
@@ -37,16 +37,16 @@
       </card>
     </div>
     <div class="center_bottom">
-      <grid :cols="3">
+      <grid :cols="2">
         <!-- <grid-item label="套餐列表" link="/table02" >
           <i slot="icon" class="iconfont">&#xe6de;</i>
         </grid-item> -->
         <grid-item label="我的套餐" link="/table02" >
           <i slot="icon" class="iconfont">&#xe6e2;</i>
         </grid-item>
-        <grid-item label="积分记录" link="/table03" >
+        <!-- <grid-item label="积分记录" link="/table03" >
           <i slot="icon" class="iconfont">&#xe6a4;</i>
-        </grid-item>
+        </grid-item> -->
         <grid-item label="我的邀请码" link="/table04" >
           <i slot="icon" class="iconfont">&#xe71c;</i>
         </grid-item>
@@ -79,7 +79,7 @@ export default {
         cardno:'',
         level:'',
         bouns:'',
-        dividend:''
+        commission:''
       }
     }
   },
@@ -137,7 +137,8 @@ export default {
             card_id:res.data.card_id
           }
           queryOnePkgInviterByCondition(para).then((res)=>{
-            this.card.dividend=res.data.dividend
+            this.card.commission=res.data.commission
+            sessionStorage.setItem('id', JSON.stringify(res.data.id));
           })
           if (res.data.bac_url) {
             that.activeColor = "url("+res.data.bac_url+")";

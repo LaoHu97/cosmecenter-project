@@ -56,6 +56,6 @@ export const selectStoreListByPhone = params => { return axios.post(`${base}/pay
 
 export const activeRelTime = params => { return axios.post(`${base}/pay/activity/activeRelTime`, params).then(res => res.data) }
 
-export const queryPkgInviteeByCondition = params => { return axios.post(`${base}/pay/weixin/activity/queryPkgInviteeByCondition`, params).then(res => res.data) }
+export const queryIntention = params => { return axios.post(`${base}/pay/weixin/activity/queryIntention`, params).then(res => res.data) }
 
 export const inviterCode = params => { return axios.get(`${base}/pay/activity/inviterCode`, { params: params }); };

@@ -7,7 +7,7 @@
     <div class="table04_box_list">
       <button-tab>
         <button-tab-item selected @on-item-click="consoleIndex(true)">邀请成功</button-tab-item>
-        <button-tab-item @on-item-click="consoleIndex(false)">已邀请</button-tab-item>
+        <button-tab-item @on-item-click="consoleIndex(false)">意向客户</button-tab-item>
       </button-tab>
     </div>
     <div class="table04_item"  v-for="item in list">
@@ -16,7 +16,11 @@
           <div>姓名：<span>{{item.name}}</span></div>
         </flexbox-item>
         <flexbox-item>
-          <div>
+          <div v-if="status=='2'">
+            <i slot="icon" class="iconfont">&#xe6b4;</i>
+            <span>套餐：{{item.pkg_name}}</span>
+          </div>
+          <div v-else >
             <i slot="icon" class="iconfont">&#xe6ed;</i>
             <span>时间：{{gmt_create(item.gmt_create)}}</span>
           </div>
@@ -35,7 +39,7 @@
 </template>
 
 <script>
-import { queryPkgInviteeByCondition, inviterCode } from '../api.js'
+import { queryIntention, inviterCode } from '../api.js'
 import InfiniteLoading from 'vue-infinite-loading'
 import { XHeader, ButtonTab, ButtonTabItem, Flexbox,  FlexboxItem, dateFormat } from 'vux'
 export default {
@@ -88,14 +92,17 @@ export default {
         pagNum: String(this.list.length / 10 + 1),
         mid:JSON.parse(sessionStorage.getItem('mid')),
         card_num:JSON.parse(sessionStorage.getItem('cardNum')),
+        cardCode:JSON.parse(sessionStorage.getItem('cardCode')),
         memid:JSON.parse(sessionStorage.getItem('memId')),
         numPerPage:'10',
-        status:this.status
+        status:this.status,
+        inviterid:String(JSON.parse(sessionStorage.getItem('id'))),
+        inviter_openid:JSON.parse(sessionStorage.getItem('openId'))
       }
-      queryPkgInviteeByCondition(para).then((res)=>{
+      queryIntention(para).then((res)=>{
         setTimeout(() => {
-          if (res.data.pkgInviteeList.length) {
-            this.list = this.list.concat(res.data.pkgInviteeList);
+          if (res.data.inviteeList.length) {
+            this.list = this.list.concat(res.data.inviteeList);
             $state.loaded();
             if (this.list.length == res.data.totalCount) {
               $state.complete();
