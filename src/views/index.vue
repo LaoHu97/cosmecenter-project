@@ -19,7 +19,7 @@
       <card>
         <div slot="content" class="card-demo-flex card-demo-content01">
          <div class="vux-1px-r">
-           <span>{{card.level}}</span>
+           <span>&nbsp;{{card.level}}</span>
            <br/>
            等级
          </div>
@@ -29,7 +29,7 @@
            积分
          </div> -->
          <div>
-           <span>￥{{card.commission}}</span>
+           <span>￥{{card.dividend}}</span>
            <br/>
            分红
          </div>
@@ -79,7 +79,7 @@ export default {
         cardno:'',
         level:'',
         bouns:'',
-        commission:''
+        dividend:''
       }
     }
   },
@@ -137,8 +137,9 @@ export default {
             card_id:res.data.card_id
           }
           queryOnePkgInviterByCondition(para).then((res)=>{
-            this.card.commission=res.data.commission
+            this.card.dividend=res.data.dividend
             sessionStorage.setItem('id', JSON.stringify(res.data.id));
+            sessionStorage.setItem('inviter_code', JSON.stringify(res.data.inviter_code));
           })
           if (res.data.bac_url) {
             that.activeColor = "url("+res.data.bac_url+")";

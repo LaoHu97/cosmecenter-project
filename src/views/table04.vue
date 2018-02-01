@@ -4,6 +4,7 @@
     <div class="table04_box_qrcode">
       <img :src="srcImg" alt="qrcode">
     </div>
+    <h3>邀请码：{{inviter_code}}</h3>
     <div class="table04_box_list">
       <button-tab>
         <button-tab-item selected @on-item-click="consoleIndex(true)">邀请成功</button-tab-item>
@@ -59,6 +60,7 @@ export default {
     }
   },
   created() {
+    this.inviter_code = JSON.parse(sessionStorage.getItem('inviter_code'))
     this.inviterERCode()
   },
   methods: {
