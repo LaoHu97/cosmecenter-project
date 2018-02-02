@@ -13,13 +13,16 @@
     </div>
     <div class="table04_item"  v-for="item in list">
       <flexbox>
-        <flexbox-item :span='4'>
-          <div>姓名：<span>{{item.name}}</span></div>
+        <flexbox-item :span='3'>
+          <div><span>{{item.name}}</span></div>
+        </flexbox-item>
+        <flexbox-item :span='3' v-if="status=='2'">
+          <div><span>{{item.send_red_status=='Y' ? '红包已发送' : '红包未发送'}}</span></div>
         </flexbox-item>
         <flexbox-item>
           <div v-if="status=='2'">
             <i slot="icon" class="iconfont">&#xe6b4;</i>
-            <span>套餐：{{item.pkg_name}}</span>
+            <span>{{item.pkg_name}}</span>
           </div>
           <div v-else >
             <i slot="icon" class="iconfont">&#xe6ed;</i>
@@ -30,10 +33,10 @@
     </div>
     <infinite-loading @infinite="onInfinite" spinner="waveDots" ref="infiniteLoading">
       <span slot="no-results">
-        您还没有邀请过好友 :(
+        您还没有邀请过好友
       </span>
       <span slot="no-more">
-        没有记录了 :(
+        没有记录了
       </span>
     </infinite-loading>
   </div>

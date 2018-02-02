@@ -17,10 +17,10 @@
       </div>
       <infinite-loading @infinite="onInfinite" spinner="waveDots" ref="infiniteLoading">
         <span slot="no-results">
-          您还没有购买套餐 :(
+          您还没有购买套餐
         </span>
         <span slot="no-more">
-          没有套餐了 :(
+          没有套餐了
         </span>
       </infinite-loading>
       <div v-transfer-dom>

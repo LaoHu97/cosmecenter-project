@@ -17,10 +17,10 @@
       </div>
       <infinite-loading :on-infinite="onInfinite" ref="infiniteLoading" spinner="spiral">
         <span slot="no-results">
-          暂无充值记录 :(
+          暂无充值记录
         </span>
         <span slot="no-more">
-          没有记录了 :(
+          没有记录了
         </span>
       </infinite-loading>
     </div>

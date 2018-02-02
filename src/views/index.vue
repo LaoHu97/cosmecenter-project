@@ -11,7 +11,7 @@
             NO：{{card.cardno}}
         </div>
         <div class="card_code">
-          <i class="iconfont">&#xe642;</i>
+          <span>{{card.level}}</span>
         </div>
       </div>
     </div>
