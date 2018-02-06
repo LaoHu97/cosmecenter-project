@@ -84,7 +84,13 @@ export default {
     },
     inviterERCode(){
       let para = querystring.parse()
-      this.srcImg = process.env.API_ROOT+'/pay/activity/inviterCode2?mid='+para.mid+'&openid='+para.openid+'&code='+para.code
+      let code = JSON.parse(sessionStorage.getItem('code'))
+      if (code==null) {
+        this.srcImg = process.env.API_ROOT+'/pay/activity/inviterCode2?mid='+para.mid+'&openid='+para.openid+'&code='+para.code+'&isInitCode=Y'
+        sessionStorage.setItem('code', JSON.stringify(para.code))
+      }else {
+        this.srcImg = process.env.API_ROOT+'/pay/activity/inviterCode2?mid='+para.mid+'&openid='+para.openid+'&code='+code+'&isInitCode=N'
+      }
     },
     onInfinite($state){
       let paras = querystring.parse()
