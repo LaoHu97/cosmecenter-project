@@ -3,9 +3,7 @@
     <div class="hacker" v-show="$route.path!=='/'">
       <x-header>{{$route.name}}</x-header>
     </div>
-    <!-- <transition name="slide-fade"> -->
-      <router-view></router-view>
-    <!-- </transition> -->
+    <router-view></router-view>
     <div v-transfer-dom>
       <loading :show="show" text="请稍后"></loading>
       <alert v-model="alertShow" title="提示" @on-hide="onHide">{{alertText}}</alert>

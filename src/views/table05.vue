@@ -64,7 +64,10 @@ export default {
     }
   },
   created() {
+    this.inviter_code = JSON.parse(sessionStorage.getItem('inviter_code'))
     this.inviterERCode()
+    // let para = querystring.parse()
+    // this.srcImg = process.env.API_ROOT+'/pay/activity/inviterCode2?mid='+para.mid+'&openid='+para.openid+'&code='+para.code
   },
   methods: {
     gmt_create(date){
@@ -82,21 +85,27 @@ export default {
       }
     },
     inviterERCode(){
-      let para = querystring.parse()
-      this.srcImg = process.env.API_ROOT+'/pay/activity/inviterCode2?mid='+para.mid+'&openid='+para.openid+'&code='+para.code
+      let para = {
+        mid:JSON.parse(sessionStorage.getItem('mid')),
+        memId:JSON.parse(sessionStorage.getItem('memId')),
+        entType:'1',
+        encrypt_code:'1',
+        code:JSON.parse(sessionStorage.getItem('cardCode')),
+        openid:JSON.parse(sessionStorage.getItem('openId'))
+      }
+      this.srcImg = process.env.API_ROOT+'/pay/activity/inviterCode?mid='+para.mid+'&memId='+para.memId+'&entType='+para.entType+'&encrypt_code='+para.encrypt_code+'&code='+para.code+'&openid='+para.openid
     },
     onInfinite($state){
-      let paras = querystring.parse()
       let para = {
         pagNum: String(this.list.length / 10 + 1),
-        mid:paras.mid,
-        card_num:paras.cno,
-        cardCode:paras.cod,
-        memid:paras.mrid,
+        mid:JSON.parse(sessionStorage.getItem('mid')),
+        card_num:JSON.parse(sessionStorage.getItem('cardNum')),
+        cardCode:JSON.parse(sessionStorage.getItem('cardCode')),
+        memid:JSON.parse(sessionStorage.getItem('memId')),
         numPerPage:'10',
         status:this.status,
-        inviterid:paras.ivr,
-        inviter_openid:paras.openid
+        inviterid:String(JSON.parse(sessionStorage.getItem('id'))),
+        inviter_openid:JSON.parse(sessionStorage.getItem('openId'))
       }
       queryIntention(para).then((res)=>{
         setTimeout(() => {

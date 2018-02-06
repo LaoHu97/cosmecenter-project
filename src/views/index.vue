@@ -29,7 +29,7 @@
            积分
          </div> -->
          <div>
-           <span>￥{{card.dividend}}</span>
+           <span>￥{{card.pkgInviter.dividend}}</span>
            <br/>
            分红
          </div>
@@ -47,7 +47,7 @@
         <!-- <grid-item label="积分记录" link="/table03" >
           <i slot="icon" class="iconfont">&#xe6a4;</i>
         </grid-item> -->
-        <grid-item label="我的邀请码" link="/table04" >
+        <grid-item label="我的邀请码" @on-item-click="onItemClick">
           <i slot="icon" class="iconfont">&#xe71c;</i>
         </grid-item>
       </grid>
@@ -56,7 +56,7 @@
 </template>
 
 <script>
-import { queryShopMem, queryOnePkgInviterByCondition } from '../api.js'
+import { queryShopMem, queryOnePkgInviterByCondition, getOtherMpOpenid } from '../api.js'
 import {
   Divider,
   Card,
@@ -79,12 +79,31 @@ export default {
         cardno:'',
         level:'',
         bouns:'',
-        dividend:''
+        pkgInviter:{
+          dividend:''
+        }
       }
     }
   },
   methods: {
-
+    onItemClick(){
+      let isOtherMpSendRed = JSON.parse(sessionStorage.getItem('isOtherMpSendRed'))
+      if (isOtherMpSendRed) {
+        let para = {
+          mid:JSON.parse(sessionStorage.getItem('mid')),
+          openid:JSON.parse(sessionStorage.getItem('openId')),
+          cardNum:JSON.parse(sessionStorage.getItem('cardNum')),
+          cardCode:JSON.parse(sessionStorage.getItem('cardCode')),
+          memId:JSON.parse(sessionStorage.getItem('memId')),
+          ivr:JSON.parse(sessionStorage.getItem('id')),
+        }
+        window.location.href = process.env.API_ROOT+'/pay/activity/getOtherMpOpenid?mid='+para.mid+'&openid='+para.openid+'&cardNum='+para.cardNum+'&cardCode='+para.cardCode+'&memId='+para.memId+'&ivr='+para.ivr
+      }else {
+        this.$router.push({
+          path: '/table05'
+        })
+      }
+    }
   },
   mounted() {
     function GetQueryString(name) {
@@ -137,9 +156,10 @@ export default {
             card_id:res.data.card_id
           }
           queryOnePkgInviterByCondition(para).then((res)=>{
-            this.card.dividend=res.data.dividend
-            sessionStorage.setItem('id', JSON.stringify(res.data.id));
-            sessionStorage.setItem('inviter_code', JSON.stringify(res.data.inviter_code));
+            this.card.pkgInviter.dividend=res.data.pkgInviter.dividend
+            sessionStorage.setItem('id', JSON.stringify(res.data.pkgInviter.id));
+            sessionStorage.setItem('inviter_code', JSON.stringify(res.data.pkgInviter.inviter_code));
+            sessionStorage.setItem('isOtherMpSendRed', JSON.stringify(res.data.isOtherMpSendRed));
           })
           if (res.data.bac_url) {
             that.activeColor = "url("+res.data.bac_url+")";

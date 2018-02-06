@@ -58,4 +58,6 @@ export const activeRelTime = params => { return axios.post(`${base}/pay/activity
 
 export const queryIntention = params => { return axios.post(`${base}/pay/weixin/activity/queryIntention`, params).then(res => res.data) }
 
+export const getOtherMpOpenid = params => { return axios.get(`${base}/pay/activity/getOtherMpOpenid`, { params: params }); };
+
 export const inviterCode = params => { return axios.get(`${base}/pay/activity/inviterCode`, { params: params }); };
