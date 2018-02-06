@@ -96,8 +96,9 @@ export default {
           cardCode:JSON.parse(sessionStorage.getItem('cardCode')),
           memId:JSON.parse(sessionStorage.getItem('memId')),
           ivr:JSON.parse(sessionStorage.getItem('id')),
+          inviter_code:JSON.parse(sessionStorage.getItem('inviter_code'))
         }
-        window.location.href = process.env.API_ROOT+'/pay/activity/getOtherMpOpenid?mid='+para.mid+'&openid='+para.openid+'&cardNum='+para.cardNum+'&cardCode='+para.cardCode+'&memId='+para.memId+'&ivr='+para.ivr
+        window.location.href = process.env.API_ROOT+'/pay/activity/getOtherMpOpenid?mid='+para.mid+'&inviter_code='+para.inviter_code+'&openid='+para.openid+'&cardNum='+para.cardNum+'&cardCode='+para.cardCode+'&memId='+para.memId+'&ivr='+para.ivr
       }else {
         this.$router.push({
           path: '/table05'

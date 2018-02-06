@@ -64,6 +64,7 @@ export default {
     }
   },
   created() {
+    this.inviter_code = querystring.parse().ivrCode
     this.inviterERCode()
   },
   methods: {
