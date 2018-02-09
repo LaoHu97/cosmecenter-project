@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <div class="hacker" v-show="$route.path!=='/'">
+    <div class="hacker" v-show="$route.meta.headerShow">
       <x-header>{{$route.name}}</x-header>
     </div>
     <router-view></router-view>
@@ -55,14 +55,6 @@ export default {
     font-family: 'Avenir', Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-  }
-  [contenteditable = "true"], input, textarea {
-  -webkit-user- select: auto!important;
-  -khtml-user-select: auto!important;
-  -moz-user-select: auto!important;
-  -ms-user-select: auto!important;
-  -o-user-select: auto!important;
-  user-select: auto!important;
   }
   @font-face {
     font-family: 'iconfont';  /* project id 302321 */

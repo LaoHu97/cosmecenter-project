@@ -4,7 +4,8 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import './api.js'
-import { AjaxPlugin, WechatPlugin, ToastPlugin, LoadingPlugin } from 'vux'
+import { AjaxPlugin, WechatPlugin, ToastPlugin, LoadingPlugin, AlertPlugin } from 'vux'
+Vue.use(AlertPlugin)
 Vue.use(LoadingPlugin)
 Vue.use(ToastPlugin)
 Vue.use(WechatPlugin)

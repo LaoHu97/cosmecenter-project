@@ -28,7 +28,7 @@
            <br/>
            积分
          </div> -->
-         <div>
+         <div @click="dividendClick">
            <span>￥{{card.pkgInviter.dividend}}</span>
            <br/>
            分红
@@ -87,6 +87,13 @@ export default {
     }
   },
   methods: {
+    dividendClick(){
+      // 显示
+      this.$vux.alert.show({
+        title: '亲爱的LADY联盟会员',
+        content: '非常感谢您的加入，我们会全力以赴用所有的真诚服务于您，在您悄悄变美的同时，希望您把这份美丽计划分享给身边的朋友，让更多的人加入我们吧！在您成功分享两位年卡会员的时候，您已经为联盟做出了卓越的贡献，将正式成为LADY联盟的"盟友"，享受盟友特有的店面运营分红，届时分红将以红包形式发放到您个人账户。LADY联盟将成为我们事业的另一个起点!'
+      })
+    },
     onItemClick(){
       let isOtherMpSendRed = JSON.parse(sessionStorage.getItem('isOtherMpSendRed'))
       if (isOtherMpSendRed) {
