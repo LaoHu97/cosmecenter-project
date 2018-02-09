@@ -90,7 +90,8 @@ export default {
       radioValue:'',
       radioamount:'',
       activationId:'',
-      groupOptions:[]
+      groupOptions:[],
+      searchValue:''
     }
   },
   methods: {

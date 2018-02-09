@@ -63,6 +63,7 @@ import {
   Grid,
   GridItem
 } from 'vux'
+import { log } from 'util';
 export default {
   components: {
     Card,
@@ -117,102 +118,199 @@ export default {
         r = null;
         return context == null || context == "" || context == "undefined" ? "" : context;
     }
-    var mid=GetQueryString("mid");
-    var card_id=GetQueryString("card_id");
-    var openid=GetQueryString("openid");
-    var encrypt_code=JSON.parse(sessionStorage.getItem('cardCode'));
-    var card_Code='';
-    if (encrypt_code==null) {
-      encrypt_code=GetQueryString("encrypt_code");
-      card_Code=null;
-    }else {
-      card_Code='1';
-    }
-    sessionStorage.setItem('card_id', JSON.stringify(card_id));
-    sessionStorage.setItem('openId', JSON.stringify(openid));
-    sessionStorage.setItem('mid', JSON.stringify(mid));
-    var that = this;
-    let para = {
-      mid: mid,
-      cardId: card_id,
-      cardCode:encrypt_code,
-      cardOpenId:openid,
-      entType:'0',
-      isInitCode:card_Code
-    }
-    queryShopMem(para).then((res)=>{
-      sessionStorage.setItem('cardNum', JSON.stringify(res.data.cardno));
-      sessionStorage.setItem('cardCode', JSON.stringify(res.data.cardCode));
-      sessionStorage.setItem('memId', JSON.stringify(res.data.memId));
-        if (res.status == 200) {
-          that.card.title = res.data.title;
-          that.card.logo = res.data.logo;
-          that.card.cardno = res.data.cardno;
-          that.card.level = res.data.level;
-          that.card.bouns = res.data.bouns;
-          let para={
-            mid:res.data.mid,
-            openid:res.data.cardOpenId,
-            card_num:res.data.cardno,
-            card_id:res.data.card_id
-          }
-          queryOnePkgInviterByCondition(para).then((res)=>{
-            this.card.pkgInviter.dividend=res.data.pkgInviter.dividend
-            sessionStorage.setItem('id', JSON.stringify(res.data.pkgInviter.id));
-            sessionStorage.setItem('inviter_code', JSON.stringify(res.data.pkgInviter.inviter_code));
-            sessionStorage.setItem('isOtherMpSendRed', JSON.stringify(res.data.isOtherMpSendRed));
-          })
-          if (res.data.bac_url) {
-            that.activeColor = "url("+res.data.bac_url+")";
-          }else {
-            switch (res.data.color) {
-              case 'Color010':
-                that.activeColor = '#63b359';
-              break;
-              case 'Color020':
-                that.activeColor = '#2c9f67';
-              break;
-              case 'Color030':
-                that.activeColor = '#509fc9';
-              break;
-              case 'Color040':
-                that.activeColor = '#5885cf';
-              break;
-              case 'Color050':
-                that.activeColor = '#9062c0';
-              break;
-              case 'Color060':
-                that.activeColor = '#d09a45';
-              break;
-              case 'Color070':
-                that.activeColor = '#e4b138';
-              break;
-              case 'Color080':
-                that.activeColor = '#ee903c';
-              break;
-              case 'Color081':
-                that.activeColor = '#f08500';
-              break;
-              case 'Color082':
-                that.activeColor = '#a9d92d';
-              break;
-              case 'Color090':
-                that.activeColor = '#dd6549';
-              break;
-              case 'Color100':
-                that.activeColor = '#cc463d';
-              break;
-              case 'Color101':
-                that.activeColor = '#cf3e36';
-              break;
-              case 'Color102':
-                that.activeColor = '#5E6671';
-              break;
-              default:that.activeColor = '#63b359';
+    var entType=GetQueryString("entType");
+    if(entType==0){
+      var mid=GetQueryString("mid");
+      var card_id=GetQueryString("card_id");
+      var openid=GetQueryString("openid");
+      var encrypt_code=JSON.parse(sessionStorage.getItem('cardCode'));
+      var card_Code='';
+      if (encrypt_code==null) {
+        encrypt_code=GetQueryString("encrypt_code");
+        card_Code=null;
+      }else {
+        card_Code='1';
+      }
+      sessionStorage.setItem('card_id', JSON.stringify(card_id));
+      sessionStorage.setItem('openId', JSON.stringify(openid));
+      sessionStorage.setItem('mid', JSON.stringify(mid));
+      var that = this;
+      let para = {
+        mid: mid,
+        cardId: card_id,
+        cardCode:encrypt_code,
+        cardOpenId:openid,
+        entType:'0',
+        isInitCode:card_Code
+      }
+      queryShopMem(para).then((res)=>{
+        sessionStorage.setItem('cardNum', JSON.stringify(res.data.cardno));
+        sessionStorage.setItem('cardCode', JSON.stringify(res.data.cardCode));
+        sessionStorage.setItem('memId', JSON.stringify(res.data.memId));
+          if (res.status == 200) {
+            that.card.title = res.data.title;
+            that.card.logo = res.data.logo;
+            that.card.cardno = res.data.cardno;
+            that.card.level = res.data.level;
+            that.card.bouns = res.data.bouns;
+            let para={
+              mid:res.data.mid,
+              openid:res.data.cardOpenId,
+              card_num:res.data.cardno,
+              card_id:res.data.card_id
+            }
+            queryOnePkgInviterByCondition(para).then((res)=>{
+              this.card.pkgInviter.dividend=res.data.pkgInviter.dividend
+              sessionStorage.setItem('id', JSON.stringify(res.data.pkgInviter.id));
+              sessionStorage.setItem('inviter_code', JSON.stringify(res.data.pkgInviter.inviter_code));
+              sessionStorage.setItem('isOtherMpSendRed', JSON.stringify(res.data.isOtherMpSendRed));
+            })
+            if (res.data.bac_url) {
+              that.activeColor = "url("+res.data.bac_url+")";
+            }else {
+              switch (res.data.color) {
+                case 'Color010':
+                  that.activeColor = '#63b359';
+                break;
+                case 'Color020':
+                  that.activeColor = '#2c9f67';
+                break;
+                case 'Color030':
+                  that.activeColor = '#509fc9';
+                break;
+                case 'Color040':
+                  that.activeColor = '#5885cf';
+                break;
+                case 'Color050':
+                  that.activeColor = '#9062c0';
+                break;
+                case 'Color060':
+                  that.activeColor = '#d09a45';
+                break;
+                case 'Color070':
+                  that.activeColor = '#e4b138';
+                break;
+                case 'Color080':
+                  that.activeColor = '#ee903c';
+                break;
+                case 'Color081':
+                  that.activeColor = '#f08500';
+                break;
+                case 'Color082':
+                  that.activeColor = '#a9d92d';
+                break;
+                case 'Color090':
+                  that.activeColor = '#dd6549';
+                break;
+                case 'Color100':
+                  that.activeColor = '#cc463d';
+                break;
+                case 'Color101':
+                  that.activeColor = '#cf3e36';
+                break;
+                case 'Color102':
+                  that.activeColor = '#5E6671';
+                break;
+                default:that.activeColor = '#63b359';
+              }
             }
           }
-        }
-    })
+      })
+    }else if(entType==1){
+      var mid = GetQueryString("mid");
+      var code = GetQueryString("code");
+      var open_Id=sessionStorage.getItem('openId');
+      if (open_Id=="undefined") {
+        open_Id="";
+      }
+      var that = this;
+      let para = {
+        mid: mid,
+        openCode: code,
+        entType:'1',
+        cardOpenId:JSON.parse(open_Id)
+      }
+      queryShopMem(para).then((res)=>{
+          if (res.status == 200&&!res.data.noMember) {
+            sessionStorage.setItem('card_id', JSON.stringify(res.data.card_id));
+            sessionStorage.setItem('openId', JSON.stringify(res.data.cardOpenId));
+            sessionStorage.setItem('mid', JSON.stringify(res.data.mid));
+            sessionStorage.setItem('cardNum', JSON.stringify(res.data.cardno));
+            sessionStorage.setItem('cardCode', JSON.stringify(res.data.cardCode));
+            sessionStorage.setItem('memId', JSON.stringify(res.data.memId));
+            that.card.title = res.data.title;
+            that.card.logo = res.data.logo;
+            that.card.cardno = res.data.cardno;
+            that.card.level = res.data.level;
+            that.card.bouns = res.data.bouns;
+            let para={
+              mid:res.data.mid,
+              openid:res.data.cardOpenId,
+              card_num:res.data.cardno,
+              card_id:res.data.card_id
+            }
+            queryOnePkgInviterByCondition(para).then((res)=>{
+              this.card.pkgInviter.dividend=res.data.pkgInviter.dividend
+              sessionStorage.setItem('id', JSON.stringify(res.data.pkgInviter.id));
+              sessionStorage.setItem('inviter_code', JSON.stringify(res.data.pkgInviter.inviter_code));
+              sessionStorage.setItem('isOtherMpSendRed', JSON.stringify(res.data.isOtherMpSendRed));
+            })
+            if (res.data.bac_url) {
+              that.activeColor = "url("+res.data.bac_url+")";
+            }else {
+              switch (res.data.color) {
+                case 'Color010':
+                  that.activeColor = '#63b359';
+                break;
+                case 'Color020':
+                  that.activeColor = '#2c9f67';
+                break;
+                case 'Color030':
+                  that.activeColor = '#509fc9';
+                break;
+                case 'Color040':
+                  that.activeColor = '#5885cf';
+                break;
+                case 'Color050':
+                  that.activeColor = '#9062c0';
+                break;
+                case 'Color060':
+                  that.activeColor = '#d09a45';
+                break;
+                case 'Color070':
+                  that.activeColor = '#e4b138';
+                break;
+                case 'Color080':
+                  that.activeColor = '#ee903c';
+                break;
+                case 'Color081':
+                  that.activeColor = '#f08500';
+                break;
+                case 'Color082':
+                  that.activeColor = '#a9d92d';
+                break;
+                case 'Color090':
+                  that.activeColor = '#dd6549';
+                break;
+                case 'Color100':
+                  that.activeColor = '#cc463d';
+                break;
+                case 'Color101':
+                  that.activeColor = '#cf3e36';
+                break;
+                case 'Color102':
+                  that.activeColor = '#5E6671';
+                break;
+                default:that.activeColor = '#63b359';
+              }
+            }
+          }else{
+            this.$router.push({
+              path: '/table06'
+            })
+          }
+      })
+    }
   }
 }
 </script>
