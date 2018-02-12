@@ -26,7 +26,7 @@ export default {
         text: '请稍候'
       })
       let mid = querystring.parse().mid
-      window.location.href = process.env.API_ROOT+"/pay/activity/choose?mid="+mid+"&sid=49&eid=66&sc=MP"
+      window.location.href = process.env.API_ROOT+"/pay/activity/choose?mid="+mid+"&sc=MP"
       // 隐藏
       this.$vux.loading.hide()
     }

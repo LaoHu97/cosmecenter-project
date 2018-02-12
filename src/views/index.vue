@@ -10,9 +10,6 @@
         <div class="card_bottom">
             NO：{{card.cardno}}
         </div>
-        <div class="card_code">
-          <span>{{card.level}}</span>
-        </div>
       </div>
     </div>
     <div class="center_cen">
