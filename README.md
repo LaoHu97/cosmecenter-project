@@ -1,5 +1,7 @@
 # cosmecenter-project
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/LaoHu97/cosmecenter-project.svg)](https://greenkeeper.io/)
+
 > A Vue.js project
 
 ## Build Setup
